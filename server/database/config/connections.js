@@ -2,7 +2,7 @@ require('env2')('config.env');
 const { Pool } = require('pg');
 
 const {
-  NODE_ENV, TEST_DB_URL, DEV_DB_URL, PRODUCTION_DB_URL,
+  NODE_ENV, TEST_DB_URL, DEV_DB_URL, DATABASE_URL,
 } = process.env;
 
 let DB_URL = '';
@@ -15,7 +15,7 @@ switch (NODE_ENV) {
     DB_URL = DEV_DB_URL;
     break;
   case 'production':
-    DB_URL = PRODUCTION_DB_URL;
+    DB_URL = DATABASE_URL;
     break;
   default:
     throw new Error('No database url found');
@@ -23,7 +23,9 @@ switch (NODE_ENV) {
 
 const options = {
   connectionString: DB_URL,
-  ssl: false,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 };
 
 const dbConnection = new Pool(options);
